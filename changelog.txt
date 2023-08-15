@@ -1,0 +1,18 @@
+[4/11/2021]
+- Added statistics endpoint for homepage
+
+[2/11/2021]
+- Changed /activity-categories to /activity/categories
+- Moved routing to separate files
+
+[1/11/2021]
+- Fix /get user endpoint -> null changed to empty string
+
+[27/10/2021]
+- Fix bug in activity pagination
+
+[18/10/2021]
+- Changed password hashing from bcrypt to md5
+
+[07/10/2021]
+- Finished student care endpoint fix -> added auth middleware, removed unnecessary endpoints
