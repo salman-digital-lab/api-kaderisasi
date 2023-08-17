@@ -302,6 +302,7 @@ class ActivityController {
 
       Logger.level = 'debug'
       Logger.transport('file').debug('start inserting answers', {'timestamps':Date.now()})
+      
       for (const [key, value] of Object.entries(sanitized_answer)) {
         let values = JSON.stringify(value)
 
@@ -314,6 +315,7 @@ class ActivityController {
       }
 
       trx.commit()
+
       Logger.transport('file').debug('finish inserting answers', {'timestamps':Date.now()})
       Logger.level = 'info'
       Logger.transport('file').info('request data', {
@@ -328,7 +330,9 @@ class ActivityController {
         message: 'Pendaftaran kamu berhasil.'
       })
     } catch (err) {
+
       trx.rollback()
+
       Logger.level = 'error'
       Logger.transport('file').error('error data', {
         'timestamps' : Date.now(),
@@ -336,6 +340,7 @@ class ActivityController {
         'message' : err.message,
         'stack' : err.stack
       })
+
       return response.status(err.status).json({
         status: 'FAILED',
         message: err.message
