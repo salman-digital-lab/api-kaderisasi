@@ -10,6 +10,7 @@ const Member_m = use('App/Models/User')
 const SaveQuestionnaire_m = use('App/Models/SaveQuestionnaire')
 const MemberRole_m = use('App/Models/MemberRole')
 const Env = use('Env')
+const Logger = use('Logger')
 
 const FormValidator = require('../../Validator/FormValidator')
 const BadRequestException = use('App/Exceptions/BadRequestException')
@@ -79,7 +80,7 @@ class ActivityController {
         .with('activityCategory', (category) => {
           category.select('id', 'name') 
         })
-        .with('minimumRole')
+        .with('minimumRoles')
         .with('carousel', (images) => {
           images.orderBy('id', 'ASC')
         })
@@ -299,6 +300,8 @@ class ActivityController {
 
       const sanitized_answer = FormValidator.validate(form_data, answer)
 
+      Logger.level = 'debug'
+      Logger.transport('file').debug('start inserting answers', {'timestamps':Date.now()})
       for (const [key, value] of Object.entries(sanitized_answer)) {
         let values = JSON.stringify(value)
 
@@ -311,12 +314,28 @@ class ActivityController {
       }
 
       trx.commit()
+      Logger.transport('file').debug('finish inserting answers', {'timestamps':Date.now()})
+      Logger.level = 'info'
+      Logger.transport('file').info('request data', {
+        'timestamps' : Date.now(),
+        'method' : request.method(),
+        'url' : request.url(),
+        'headers' : request.headers()
+      })
+
       return response.status(200).json({
         status: 'SUCCESS',
         message: 'Pendaftaran kamu berhasil.'
       })
     } catch (err) {
       trx.rollback()
+      Logger.level = 'error'
+      Logger.transport('file').error('error data', {
+        'timestamps' : Date.now(),
+        'status' : err.status,
+        'message' : err.message,
+        'stack' : err.stack
+      })
       return response.status(err.status).json({
         status: 'FAILED',
         message: err.message
