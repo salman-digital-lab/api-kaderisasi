@@ -80,7 +80,7 @@ class ActivityController {
         .with('activityCategory', (category) => {
           category.select('id', 'name') 
         })
-        .with('minimumRoles')
+        .with('minimumRole')
         .with('carousel', (images) => {
           images.orderBy('id', 'ASC')
         })
@@ -302,7 +302,7 @@ class ActivityController {
 
       Logger.level = 'debug'
       Logger.transport('file').debug('start inserting answers', {'timestamps':Date.now()})
-      
+
       for (const [key, value] of Object.entries(sanitized_answer)) {
         let values = JSON.stringify(value)
 
