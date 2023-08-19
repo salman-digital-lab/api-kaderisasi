@@ -300,9 +300,6 @@ class ActivityController {
 
       const sanitized_answer = FormValidator.validate(form_data, answer)
 
-      Logger.level = 'debug'
-      Logger.transport('file').debug('start inserting answers', {'timestamps':Date.now()})
-
       for (const [key, value] of Object.entries(sanitized_answer)) {
         let values = JSON.stringify(value)
 
@@ -316,7 +313,6 @@ class ActivityController {
 
       trx.commit()
 
-      Logger.transport('file').debug('finish inserting answers', {'timestamps':Date.now()})
       Logger.level = 'info'
       Logger.transport('file').info('request data', {
         'timestamps' : Date.now(),
