@@ -10,6 +10,7 @@ const Member_m = use('App/Models/User')
 const SaveQuestionnaire_m = use('App/Models/SaveQuestionnaire')
 const MemberRole_m = use('App/Models/MemberRole')
 const Env = use('Env')
+const Logger = use('Logger')
 
 const FormValidator = require('../../Validator/FormValidator')
 const BadRequestException = use('App/Exceptions/BadRequestException')
@@ -311,12 +312,22 @@ class ActivityController {
       }
 
       trx.commit()
+
       return response.status(200).json({
         status: 'SUCCESS',
         message: 'Pendaftaran kamu berhasil.'
       })
     } catch (err) {
+
       trx.rollback()
+
+      const datetime = new Date().toLocaleString()
+
+      const log_data = request.ip() + ' - - [' + datetime + '] ' + '"' + request.method() + ' ' + request.url() + ' ' + err.message + '"' + err.status
+
+      Logger.level = 'error'
+      Logger.transport('file').error(log_data)
+
       return response.status(err.status).json({
         status: 'FAILED',
         message: err.message
