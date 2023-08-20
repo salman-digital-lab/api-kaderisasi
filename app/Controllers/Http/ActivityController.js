@@ -313,14 +313,6 @@ class ActivityController {
 
       trx.commit()
 
-      Logger.level = 'info'
-      Logger.transport('file').info('request data', {
-        'timestamps' : Date.now(),
-        'method' : request.method(),
-        'url' : request.url(),
-        'headers' : request.headers()
-      })
-
       return response.status(200).json({
         status: 'SUCCESS',
         message: 'Pendaftaran kamu berhasil.'
@@ -329,13 +321,12 @@ class ActivityController {
 
       trx.rollback()
 
+      const datetime = new Date().toLocaleString()
+
+      const log_data = request.ip() + ' - - [' + datetime + '] ' + '"' + request.method() + ' ' + request.url() + ' ' + err.message + '"' + err.status
+
       Logger.level = 'error'
-      Logger.transport('file').error('error data', {
-        'timestamps' : Date.now(),
-        'status' : err.status,
-        'message' : err.message,
-        'stack' : err.stack
-      })
+      Logger.transport('file').error(log_data)
 
       return response.status(err.status).json({
         status: 'FAILED',
